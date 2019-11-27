@@ -1,0 +1,5 @@
+{
+    "require": {
+        "philkra/elastic-apm-php-agent": "dev-master"
+    }
+}

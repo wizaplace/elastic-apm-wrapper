@@ -1,0 +1,118 @@
+version: '2.1'
+executors:
+  php:
+    docker:
+      - image: php:7.2.25-cli-alpine
+    working_directory: ~/repo
+
+jobs:
+  composer:
+    executor: php
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer global require hirak/prestissimo; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpcs:
+    executor: php
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpcs
+          command: vendor/bin/phpcs
+
+  phpstan:
+    executor: php
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpstan
+          command: vendor/bin/phpstan analyse
+
+  phpunit:
+    executor: php
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit  --testdox
+      - store_test_results:
+          path: phpunit-result
+
+  sonar-qube:
+    docker:
+      - image: php:7.2.25-cli
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: Install Sonarqube
+          environment:
+            VERSION: 4.1.0.1829
+          command: |
+            apt update
+            apt install unzip -y
+            mkdir -p /tmp/scanner
+            curl -Ol https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${VERSION}-linux.zip
+            unzip -qq -o sonar-scanner-cli-${VERSION}-linux.zip -d /tmp/scanner
+            mv /tmp/scanner/sonar-scanner-${VERSION}-linux /usr/local/sonar-scanner
+            chmod +x /usr/local/sonar-scanner/bin/sonar-scanner
+            chmod +x /usr/local/sonar-scanner/jre/bin/java
+      - run:
+          name: Run Sonarqube scanner
+          environment:
+            SONARQUBE_SCANNER_PARAMS: '{"sonar.host.url":"https://sonarcloud.io"}'
+            SONAR_SCANNER_OPTS: "-Xmx2048m"
+          command: |
+            /usr/local/sonar-scanner/bin/sonar-scanner
+
+workflows:
+  version: '2.1'
+  Code quality:
+    jobs:
+      - composer
+      - phpcs:
+          requires:
+            - composer
+      - phpstan:
+          requires:
+            - composer
+      - phpunit:
+          requires:
+            - composer
+      - sonar-qube

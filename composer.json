@@ -1,4 +1,17 @@
 {
+    "name": "wizaplace/elastic-apm-wrapper",
+    "description": "Wizaplace Elastic APM Wrapper",
+    "keywords": [
+        "Elastic APM"
+    ],
+    "homepage": "https://github.com/wizaplace/elastic-apm-wrapper",
+    "license": "Proprietary",
+    "authors": [
+        {
+            "name": "Wizacha DevTeam",
+            "email": "dev@wizacha.com"
+        }
+    ],
     "require": {
         "philkra/elastic-apm-php-agent": "dev-master"
     }

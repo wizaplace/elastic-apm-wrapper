@@ -14,7 +14,7 @@
     ],
     "require": {
         "monolog/monolog": "^2.0",
-        "philkra/elastic-apm-php-agent": "dev-master@dev"
+        "philkra/elastic-apm-php-agent": "dev-master"
     },
     "autoload": {
         "psr-4": {

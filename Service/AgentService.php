@@ -103,7 +103,7 @@ final class AgentService
         return $this;
     }
 
-        public function startSpan(string $name, Transaction $parent = null): ?Span
+    public function startSpan(string $name, Transaction $parent = null): ?Span
     {
         $transaction = $this->transaction;
 
@@ -114,7 +114,7 @@ final class AgentService
         $newSpan = $this->agent->factory()->newSpan($name, $parent ?? $transaction);
         $newSpan->start();
 
-        $this->spans[] = $newSpan;
+        $this->spans[$newSpan->getId()] = $newSpan;
 
         return $newSpan;
     }
@@ -123,6 +123,8 @@ final class AgentService
     {
         $span->stop();
         $this->agent->putEvent($span);
+
+        unset($this->spans[$span->getId()]);
 
         return $this;
     }

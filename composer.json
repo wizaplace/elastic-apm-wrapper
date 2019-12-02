@@ -13,11 +13,12 @@
         }
     ],
     "require": {
-        "philkra/elastic-apm-php-agent": "dev-master"
+        "philkra/elastic-apm-php-agent": "dev-master",
+        "monolog/monolog": "^2.0"
     },
     "autoload": {
         "psr-4": {
-            "Wizacha\\Apm\\": ""
+            "Wizacha\\ElasticApm\\": ""
         },
         "exclude-from-classmap": [
             "/Tests/"
@@ -25,7 +26,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Wizacha\\Apm\\Tests\\": "/Tests/"
+            "Wizacha\\ElasticApm\\Tests\\": "/Tests/"
         }
     }
 }

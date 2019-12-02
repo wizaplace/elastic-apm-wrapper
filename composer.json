@@ -1,5 +1,4 @@
 {
-    "minimum-stability": "dev",
     "name": "wizaplace/elastic-apm-wrapper",
     "description": "Wizaplace Elastic APM Wrapper",
     "keywords": [
@@ -15,7 +14,7 @@
     ],
     "require": {
         "monolog/monolog": "^2.0",
-        "philkra/elastic-apm-php-agent": "dev-master"
+        "philkra/elastic-apm-php-agent": "dev-master@dev"
     },
     "autoload": {
         "psr-4": {

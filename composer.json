@@ -1,4 +1,5 @@
 {
+    "minimum-stability": "dev",
     "name": "wizaplace/elastic-apm-wrapper",
     "description": "Wizaplace Elastic APM Wrapper",
     "keywords": [

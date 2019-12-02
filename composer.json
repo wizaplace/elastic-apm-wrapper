@@ -13,7 +13,7 @@
         }
     ],
     "require": {
-        "philkra/elastic-apm-php-agent": "dev-master",
+        "philkra/elastic-apm-php-agent": "*",
         "monolog/monolog": "^2.0"
     },
     "autoload": {

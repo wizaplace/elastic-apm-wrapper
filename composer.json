@@ -14,5 +14,18 @@
     ],
     "require": {
         "philkra/elastic-apm-php-agent": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wizacha\\Apm\\": ""
+        },
+        "exclude-from-classmap": [
+            "/Tests/"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Wizacha\\Apm\\Tests\\": "/Tests/"
+        }
     }
 }

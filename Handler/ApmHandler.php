@@ -5,7 +5,7 @@ namespace Wizacha\ElasticApm\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;
-use Wizacha\Apm\AgentService as AgentService;
+use Wizacha\ElasticApm\Service\AgentService;
 
 class ApmHandler extends AbstractProcessingHandler
 {

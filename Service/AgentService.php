@@ -69,12 +69,12 @@ final class AgentService
             return $this;
         }
 
+        $this->stopAllSpans();
+
         $this->agent->stopTransaction(
             $this->transaction->getTransactionName(),
             $meta
         );
-
-        $this->stopAllSpans();
 
         $this->transaction = null;
 

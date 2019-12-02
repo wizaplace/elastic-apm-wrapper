@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Wizacha\ElasticApm;
+namespace Wizacha\ElasticApm\Handler;
 
 use Monolog\Handler\AbstractProcessingHandler;
 use Monolog\Logger;

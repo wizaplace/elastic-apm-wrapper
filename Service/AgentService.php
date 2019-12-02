@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Wizacha\ElasticApm;
+namespace Wizacha\ElasticApm\Service;
 
 use PhilKra\Agent;
 use PhilKra\Events\Span;

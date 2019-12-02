@@ -74,6 +74,8 @@ final class AgentService
             $meta
         );
 
+        $this->stopAllSpans();
+
         $this->transaction = null;
 
         try {

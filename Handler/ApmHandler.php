@@ -24,9 +24,7 @@ class ApmHandler extends AbstractProcessingHandler
     /** @var mixed[] $record */
     protected function write(array $record): void
     {
-        if ($record['context']['exception'] instanceof \Throwable) {
-            $this->agentService->error($record['context']['exception'], $record['context']);
-        }
+        $this->agentService->error($record['context']['exception'], $record['context']);
 
         $this->agentService->stopAllSpans();
         $this->agentService->stopTransaction();

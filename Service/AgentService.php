@@ -121,6 +121,10 @@ final class AgentService
 
     public function stopSpan(Span $span): self
     {
+        if (false === array_key_exists($span->getId(), $this->spans)) {
+            return $this;
+        }
+
         $span->stop();
         $this->agent->putEvent($span);
 

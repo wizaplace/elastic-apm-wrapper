@@ -53,7 +53,7 @@ final class AgentService
     /** @var mixed[] $context */
     public function startTransaction(string $name, array $context = []): ?self
     {
-        if ($this->apmEnabled === false) {
+        if (false === $this->apmEnabled) {
             return null;
         }
 
@@ -70,7 +70,6 @@ final class AgentService
         }
 
         $this->stopAllSpans();
-
         $this->agent->stopTransaction(
             $this->transaction->getTransactionName(),
             $meta
@@ -94,7 +93,7 @@ final class AgentService
     {
         $transaction = $this->transaction;
 
-        if ($transaction instanceof Transaction === false) {
+        if (false === $transaction instanceof Transaction) {
             return $this;
         }
 
@@ -107,13 +106,13 @@ final class AgentService
     {
         $transaction = $this->transaction;
 
-        if ($transaction instanceof Transaction === false) {
+        if (false === $transaction instanceof Transaction) {
             return null;
         }
 
         $newSpan = $this->agent->factory()->newSpan($name, $parent ?? $transaction);
-        $newSpan->start();
 
+        $newSpan->start();
         $this->spans[$newSpan->getId()] = $newSpan;
 
         return $newSpan;

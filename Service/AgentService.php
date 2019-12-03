@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Wizacha\ElasticApm\Service;
@@ -35,7 +36,8 @@ final class AgentService
         LoggerInterface $logger = null
     ) {
         $this->apmEnabled = $apmEnabled;
-        if ($this->apmEnabled === true) {
+
+        if (true === $this->apmEnabled) {
             $this->agent = new Agent(
                 [
                     'appName' => $applicationName,

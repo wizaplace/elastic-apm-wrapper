@@ -34,6 +34,7 @@ final class AgentService
         string $apmSecretToken,
         bool $apmEnabled,
         LoggerInterface $logger
+//        Agent $agent
     ) {
         $this->apmEnabled = $apmEnabled;
 
@@ -48,6 +49,8 @@ final class AgentService
                 ]
             );
         }
+
+//        $this->agent = $agent;
         $this->logger = $logger;
         $this->spans = [];
     }

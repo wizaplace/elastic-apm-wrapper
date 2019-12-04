@@ -27,30 +27,12 @@ final class AgentService
     private $apmEnabled;
 
     public function __construct(
-        string $applicationName,
-        string $applicationVersion,
-        string $applicationEnvironment,
-        string $apmServerUrl,
-        string $apmSecretToken,
         bool $apmEnabled,
-        LoggerInterface $logger
-//        Agent $agent
+        LoggerInterface $logger,
+        Agent $agent
     ) {
         $this->apmEnabled = $apmEnabled;
-
-        if (true === $this->apmEnabled) {
-            $this->agent = new Agent(
-                [
-                    'appName' => $applicationName,
-                    'appVersion' => $applicationVersion,
-                    'environment' => $applicationEnvironment,
-                    'serverUrl' => $apmServerUrl,
-                    'secretToken' => $apmSecretToken,
-                ]
-            );
-        }
-
-//        $this->agent = $agent;
+        $this->agent = $agent;
         $this->logger = $logger;
         $this->spans = [];
     }

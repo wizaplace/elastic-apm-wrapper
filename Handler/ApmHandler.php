@@ -49,7 +49,7 @@ class ApmHandler extends AbstractProcessingHandler
         } else {
             /**
              * Just a safety net if the record is not well-structured.
-             * Should never happen unless Monolog implementation changes.
+             * Should never happen unless Monolog wiring is not properly done.
              */
             $ex = new \LogicException(self::MISSING_THROWABLE_ERROR);
             $this->agentService->error($ex, $record);

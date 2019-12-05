@@ -44,30 +44,27 @@ class AgentServiceTest extends TestCase
         $agentPhilkraService = $this->getMockBuilder(Agent::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $logger = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $agentService = new AgentService(
             true,
-            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $logger,
             $agentPhilkraService
         );
 
         $agentPhilkraService->expects($this->once())
-            ->method('startTransaction');
-
-        // Fail to test that logger->warning() is called
-//        $logger = $this->getMockBuilder(LoggerInterface::class)
-//            ->disableOriginalConstructor()
-//            ->getMock();
-
-//        $logger->expects($this->once())
-//            ->method('warning')
-////            ->with('Elastic APM wrapper transaction is already started')
-//        ;
+            ->method('startTransaction')
+        ;
+        $logger->expects($this->exactly(2))
+            ->method('warning')
+            ->with('Elastic APM wrapper transaction is already started')
+        ;
 
         $agentService->startTransaction($transactionName);
         $agentService->startTransaction($transactionName);
         $agentService->startTransaction($transactionName);
-
-        static::assertInstanceOf(AgentService::class, $agentService->startTransaction($transactionName));
     }
 
     /**
@@ -91,7 +88,7 @@ class AgentServiceTest extends TestCase
     /**
      * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
      */
-    public function testStopTransaction(): void
+    public function testStopExistentTransaction(): void
     {
         $transactionName = 'Transaction De Test';
         $agentPhilkraService = $this->getMockBuilder(Agent::class)
@@ -114,5 +111,29 @@ class AgentServiceTest extends TestCase
         $transaction = $transaction->stopTransaction()->getTransaction();
 
         static::assertNull($transaction);
+    }
+
+    /**
+     * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
+     */
+    public function testStopNonExistentTransaction(): void
+    {
+        $agentPhilkraService = $this->getMockBuilder(Agent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $agentService = new AgentService(
+            true,
+            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $agentPhilkraService
+        );
+
+        $agentPhilkraService->expects($this->never())
+            ->method('send')
+        ;
+        $agentPhilkraService->expects($this->never())
+            ->method('stopTransaction')
+        ;
+
+        $agentService->stopTransaction();
     }
 }

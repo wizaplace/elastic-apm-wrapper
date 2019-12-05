@@ -120,10 +120,15 @@ class AgentServiceTest extends TestCase
     {
         $agentPhilkraService = $this->getMockBuilder(Agent::class)
             ->disableOriginalConstructor()
-            ->getMock();
+            ->getMock()
+        ;
+        $logger = $this->getMockBuilder(LoggerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock()
+        ;
         $agentService = new AgentService(
             true,
-            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $logger,
             $agentPhilkraService
         );
 
@@ -132,6 +137,10 @@ class AgentServiceTest extends TestCase
         ;
         $agentPhilkraService->expects($this->never())
             ->method('stopTransaction')
+        ;
+        $logger->expects($this->once())
+            ->method('warning')
+            ->with('Elastic APM wrapper: trying to stop a non-existing transaction.')
         ;
 
         $agentService->stopTransaction();

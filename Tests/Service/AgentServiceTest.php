@@ -45,10 +45,13 @@ class AgentServiceTest extends TestCase
             ->method('startTransaction')
             ->with($this->transactionName)
         ;
+        $this->logger->expects($this->never())
+            ->method('warning')
+        ;
 
         $agentService = new AgentService(
             true,
-            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $this->logger,
             $this->agentPhilkraService
         );
 
@@ -86,7 +89,7 @@ class AgentServiceTest extends TestCase
     {
         $agentService = new AgentService(
             false,
-            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $this->logger,
             $this->agentPhilkraService
         );
 
@@ -100,7 +103,7 @@ class AgentServiceTest extends TestCase
     {
         $agentService = new AgentService(
             true,
-            $this->getMockBuilder(LoggerInterface::class)->disableOriginalConstructor()->getMock(),
+            $this->logger,
             $this->agentPhilkraService
         );
 
@@ -109,6 +112,9 @@ class AgentServiceTest extends TestCase
         ;
         $this->agentPhilkraService->expects($this->once())
             ->method('stopTransaction')
+        ;
+        $this->logger->expects($this->never())
+            ->method('warning')
         ;
 
         $transaction = $agentService->startTransaction($this->transactionName);

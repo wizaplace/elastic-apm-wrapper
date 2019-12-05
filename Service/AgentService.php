@@ -92,6 +92,11 @@ final class AgentService
         return $this;
     }
 
+    public function getTransaction(): ?Transaction
+    {
+        return $this->transaction;
+    }
+
     /**
      * @param mixed[] $context
      *

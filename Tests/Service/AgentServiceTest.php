@@ -18,7 +18,7 @@ class AgentServiceTest extends TestCase
     /**
      * @covers  \Wizacha\ElasticApm\Service\AgentService::startTransaction
      */
-    public function testStartNewTransaction() : void
+    public function testStartNewTransaction(): void
     {
         $transactionName = 'Transaction De Test';
         $agentPhilkraService = $this->getMockBuilder(Agent::class)

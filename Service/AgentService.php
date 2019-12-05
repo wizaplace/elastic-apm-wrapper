@@ -1,4 +1,9 @@
 <?php
+/**
+ * @author      Wizacha DevTeam <dev@wizacha.com>
+ * @copyright   Copyright (c) Wizacha
+ * @license     Proprietary
+ */
 
 declare(strict_types=1);
 
@@ -9,7 +14,7 @@ use PhilKra\Events\Span;
 use PhilKra\Events\Transaction;
 use Psr\Log\LoggerInterface;
 
-final class AgentService
+class AgentService
 {
     /** @var Agent */
     private $agent;

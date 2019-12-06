@@ -93,7 +93,11 @@ class AgentServiceTest extends TestCase
             $this->agentPhilkraService
         );
 
-        static::assertNull($agentService->startTransaction($this->transactionName));
+        $this->agentPhilkraService->expects($this->never())
+            ->method('startTransaction')
+        ;
+
+        static::assertInstanceOf(AgentService::class, $agentService->startTransaction($this->transactionName));
     }
 
     /**

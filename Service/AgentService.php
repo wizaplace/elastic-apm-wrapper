@@ -13,6 +13,7 @@ use PhilKra\Agent;
 use PhilKra\Events\Span;
 use PhilKra\Events\Transaction;
 use Psr\Log\LoggerInterface;
+use PhilKra\Events\Error;
 
 class AgentService
 {
@@ -138,6 +139,10 @@ class AgentService
     {
         if (true === $this->apmEnabled) {
             if (true === array_key_exists($span->getId(), $this->spans)) {
+//                $exception = new \Exception('Closing span #' . $span->getId());
+//                $errorClass = new Error($exception, []);
+//                $stackTrace = $errorClass->jsonSerialize()['error']['exception']['stacktrace'];
+//                $span->setStacktrace($stackTrace);
                 $span->stop();
                 $this->agent->putEvent($span);
                 unset($this->spans[$span->getId()]);

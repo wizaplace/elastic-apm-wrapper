@@ -43,21 +43,19 @@ class AgentService
     }
 
     /**
-     * @return \Wizacha\ElasticApm\Service\AgentService|null
+     * @return \Wizacha\ElasticApm\Service\AgentService
      *
      * @throws \PhilKra\Exception\Transaction\DuplicateTransactionNameException
      */
-    public function startTransaction(string $name, array $context = []): ?self
+    public function startTransaction(string $name, array $context = []): self
     {
         // Monitoring must be enabled. We can start only one transaction.
-        if (false === $this->apmEnabled) {
-            return null;
-        }
-
-        if (false === $this->isTransactionStarted()) {
-            $this->transaction = $this->agent->startTransaction($name, $context);
-        } else {
-            $this->logger->warning('Elastic APM wrapper transaction is already started');
+        if (true === $this->apmEnabled) {
+            if (false === $this->transaction instanceof Transaction) {
+                $this->transaction = $this->agent->startTransaction($name, $context);
+            } else {
+                $this->logger->warning('Elastic APM wrapper transaction is already started');
+            }
         }
 
         return $this;
@@ -72,26 +70,23 @@ class AgentService
      */
     public function stopTransaction(array $meta = []): self
     {
-        if (false === $this->isTransactionStarted()) {
-            $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing transaction.');
-
-            return $this;
-        }
-
-        $this->stopAllSpans();
-        $this->agent->stopTransaction(
-            $this->transaction->getTransactionName(),
-            $meta
-        );
-
-        $this->transaction = null;
-
-        try {
-            $this->agent->send();
-        } catch (\Throwable $throwable) {
-            $this->logger->error(
-                'Impossible to send the transaction data to the APM. Error was:' . $throwable->getMessage()
+        if (true === $this->transaction instanceof Transaction) {
+            $this->stopAllSpans();
+            $this->agent->stopTransaction(
+                $this->transaction->getTransactionName(),
+                $meta
             );
+            $this->transaction = null;
+
+            try {
+                $this->agent->send();
+            } catch (\Throwable $throwable) {
+                $this->logger->error(
+                    'Impossible to send the transaction data to the APM. Error was:' . $throwable->getMessage()
+                );
+            }
+        } elseif (true === $this->apmEnabled) {
+            $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing transaction.');
         }
 
         return $this;
@@ -109,19 +104,23 @@ class AgentService
      */
     public function error(\Throwable $throwable, array $context = []): self
     {
-        if (false === $this->isTransactionStarted()) {
-            $this->logger->warning('Elastic APM wrapper: trying to log an error with a non-existing transaction.');
-
-            return $this;
+        if (true === $this->apmEnabled) {
+            if (true === $this->transaction instanceof Transaction) {
+                $this->agent->captureThrowable($throwable, $context, $this->transaction);
+            } else {
+                $this->logger->warning('Elastic APM wrapper: trying to log an error with a non-existing transaction.');
+            }
         }
-
-        $this->agent->captureThrowable($throwable, $context, $this->transaction);
 
         return $this;
     }
 
     public function startSpan(string $name, Transaction $parent = null): ?Span
     {
+        if (false === $this->apmEnabled) {
+            return null;
+        }
+
         if (false === $this->transaction instanceof Transaction) {
             $this->logger->warning('Elastic APM wrapper: trying to start a span with a non-existing transaction.');
 
@@ -137,16 +136,15 @@ class AgentService
 
     public function stopSpan(Span $span): self
     {
-        if (false === array_key_exists($span->getId(), $this->spans)) {
-            $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing span.');
-
-            return $this;
+        if (true === $this->apmEnabled) {
+            if (true === array_key_exists($span->getId(), $this->spans)) {
+                $span->stop();
+                $this->agent->putEvent($span);
+                unset($this->spans[$span->getId()]);
+            } else {
+                $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing span.');
+            }
         }
-
-        $span->stop();
-        $this->agent->putEvent($span);
-
-        unset($this->spans[$span->getId()]);
 
         return $this;
     }
@@ -158,10 +156,5 @@ class AgentService
         }
 
         return $this;
-    }
-
-    public function isTransactionStarted(): bool
-    {
-        return $this->transaction instanceof Transaction;
     }
 }

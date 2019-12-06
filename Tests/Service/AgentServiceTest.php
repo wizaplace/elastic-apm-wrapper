@@ -10,7 +10,6 @@ namespace Wizacha\ElasticApm\Tests\Handler;
 
 use PhilKra\Agent;
 use PhilKra\Events\Span;
-use PHPUnit\Framework\ExceptionTest;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Wizacha\ElasticApm\Service\AgentService;
@@ -144,6 +143,7 @@ class AgentServiceTest extends TestCase
         $transaction = $agentService->startTransaction($this->transactionName);
         $transaction->stopTransaction();
     }
+
     /**
      * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
      */
@@ -233,9 +233,8 @@ class AgentServiceTest extends TestCase
         $this->agentPhilkraService->expects($this->once())
             ->method('putEvent')
             ->with($span);
-        ;
 
-        static::assertInstanceOf(AgentService::class, $agentService->stopSpan($span));;
+        static::assertInstanceOf(AgentService::class, $agentService->stopSpan($span));
     }
 
     /**
@@ -263,5 +262,4 @@ class AgentServiceTest extends TestCase
         // Then we try to pass the same object as contained in $span, but after having stopped it
         $agentService->stopSpan($span);
     }
-
 }

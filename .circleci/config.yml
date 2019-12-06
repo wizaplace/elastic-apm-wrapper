@@ -56,11 +56,8 @@ jobs:
       - attach_workspace:
           at: .
       - run:
-          name: Cache warmup
-          command: bin/console cache:warmup -e dev
-      - run:
           name: phpstan
-          command: bin/phpstan
+          command: vendor/bin/phpstan analyse --level=7 Handler Service
 
   phpunit:
     executor: php

@@ -10,6 +10,7 @@ namespace Wizacha\ElasticApm\Tests\Handler;
 
 use PhilKra\Agent;
 use PhilKra\Events\Span;
+use PHPUnit\Framework\ExceptionTest;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Wizacha\ElasticApm\Service\AgentService;
@@ -123,6 +124,26 @@ class AgentServiceTest extends TestCase
         static::assertNull($transaction);
     }
 
+    /**
+     * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
+     */
+    public function testStopTransactionSendFailure(): void
+    {
+        $agentService = new AgentService(
+            true,
+            $this->logger,
+            $this->agentPhilkraService
+        );
+
+        $this->logger->expects($this->once())
+            ->method('error')
+        ;
+        $this->agentPhilkraService->method('send')
+            ->will($this->throwException(new \Exception()));
+
+        $transaction = $agentService->startTransaction($this->transactionName);
+        $transaction->stopTransaction();
+    }
     /**
      * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
      */

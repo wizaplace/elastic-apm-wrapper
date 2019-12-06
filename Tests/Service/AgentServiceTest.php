@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace Wizacha\ElasticApm\Tests\Handler;
 
 use PhilKra\Agent;
+use PhilKra\Events\EventFactoryInterface;
 use PhilKra\Events\Span;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
@@ -222,10 +223,20 @@ class AgentServiceTest extends TestCase
      */
     public function testStopExistentSpan(): void
     {
+        $spanMock = $this->getMockBuilder(Span::class)->disableOriginalConstructor()->getMock();
+        $spanMock->expects($this->once())->method('stop');
+        $spanMock->expects($this->once())->method('setStacktrace');
+
+        $factoryMock = $this->getMockBuilder(EventFactoryInterface::class)->disableOriginalConstructor()->getMock();
+        $factoryMock->expects($this->once())->method('newSpan')->will($this->returnValue($spanMock));
+
+        $agentPhilkraService = $this->agentPhilkraService;
+        $agentPhilkraService->method('factory')->will($this->returnValue($factoryMock));
+
         $agentService = new AgentService(
             true,
             $this->logger,
-            $this->agentPhilkraService
+            $agentPhilkraService
         );
 
         $agentService->startTransaction($this->transactionName);

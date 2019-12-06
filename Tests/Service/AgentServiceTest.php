@@ -138,7 +138,8 @@ class AgentServiceTest extends TestCase
             ->method('error')
         ;
         $this->agentPhilkraService->method('send')
-            ->will($this->throwException(new \Exception()));
+            ->will($this->throwException(new \Exception()))
+        ;
 
         $transaction = $agentService->startTransaction($this->transactionName);
         $transaction->stopTransaction();

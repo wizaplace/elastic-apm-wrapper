@@ -140,9 +140,9 @@ class AgentService
         if (true === $span instanceof Span
             && true === array_key_exists($span->getId(), $this->spans)
         ) {
-                $span->stop();
-                $this->agent->putEvent($span);
-                unset($this->spans[$span->getId()]);
+            $span->stop();
+            $this->agent->putEvent($span);
+            unset($this->spans[$span->getId()]);
         } else {
             $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing span.');
         }

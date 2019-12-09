@@ -224,7 +224,6 @@ class AgentServiceTest extends TestCase
     public function testStopExistentSpan(): void
     {
         $spanMock = $this->getMockBuilder(Span::class)->disableOriginalConstructor()->getMock();
-        $spanMock->expects($this->once())->method('setStacktrace');
         $spanMock->expects($this->once())->method('stop');
 
         $factoryMock = $this->getMockBuilder(EventFactoryInterface::class)->disableOriginalConstructor()->getMock();

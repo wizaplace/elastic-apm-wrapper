@@ -135,20 +135,16 @@ class AgentService
         return $newSpan;
     }
 
-    public function stopSpan(Span $span): self
+    public function stopSpan(?Span $span): self
     {
-        if (true === $this->apmEnabled) {
-            if (true === array_key_exists($span->getId(), $this->spans)) {
-                $exception = new \Exception('Closing span #' . $span->getId());
-                $errorClass = new Error($exception, []);
-                $stackTrace = $errorClass->jsonSerialize()['error']['exception']['stacktrace'];
-                $span->setStacktrace($stackTrace);
+        if (true === $span instanceof Span
+            && true === array_key_exists($span->getId(), $this->spans)
+        ) {
                 $span->stop();
                 $this->agent->putEvent($span);
                 unset($this->spans[$span->getId()]);
-            } else {
-                $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing span.');
-            }
+        } else {
+            $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing span.');
         }
 
         return $this;

@@ -16,7 +16,7 @@
         "sort-packages": true
     },
     "require": {
-        "monolog/monolog": "^2.0",
+        "monolog/monolog": "^1.*",
         "philkra/elastic-apm-php-agent": "dev-master"
     },
     "autoload": {

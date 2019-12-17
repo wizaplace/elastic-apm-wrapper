@@ -1,3 +1,5 @@
+[![CircleCI](https://circleci.com/gh/wizaplace/elastic-apm-wrapper.svg?style=svg&circle-token=6c0dadd3c5c190c95ac1ba88eacdc164861e7443)](https://circleci.com/gh/wizaplace/elastic-apm-wrapper)
+
 # Elastic APM Wrapper
 
 PHP Wrapper to send Logs to Elastic APM

@@ -35,8 +35,8 @@ class AgentService
 
     public function __construct(
         bool $apmEnabled,
-        Agent $agent = null,
-        LoggerInterface $logger = null
+        LoggerInterface $logger = null,
+        Agent $agent = null
     ) {
         $this->apmEnabled = $apmEnabled;
         $this->agent = $agent;

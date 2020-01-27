@@ -18,7 +18,7 @@ use Psr\Log\LoggerInterface;
 
 class AgentService
 {
-    /** @var Agent */
+    /** @var Agent|null */
     private $agent;
 
     /** @var LoggerInterface */
@@ -35,8 +35,8 @@ class AgentService
 
     public function __construct(
         bool $apmEnabled,
-        LoggerInterface $logger,
-        Agent $agent
+        Agent $agent = null,
+        LoggerInterface $logger = null
     ) {
         $this->apmEnabled = $apmEnabled;
         $this->agent = $agent;
@@ -47,6 +47,11 @@ class AgentService
     public function getApmEnabled(): bool
     {
         return $this->apmEnabled;
+    }
+
+    public function getAgent(): ?Agent
+    {
+        return $this->agent;
     }
 
     /**

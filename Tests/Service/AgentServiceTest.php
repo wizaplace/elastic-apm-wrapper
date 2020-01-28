@@ -51,7 +51,6 @@ class AgentServiceTest extends TestCase
         ;
 
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -65,7 +64,6 @@ class AgentServiceTest extends TestCase
     public function testStartNewTransactionWhileAlreadyStarted(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -89,9 +87,8 @@ class AgentServiceTest extends TestCase
     public function testStartNewTransactionWithFlagFalse(): void
     {
         $agentService = new AgentService(
-            false,
             $this->logger,
-            $this->agentPhilkraService
+            null
         );
 
         $this->agentPhilkraService->expects($this->never())
@@ -107,7 +104,6 @@ class AgentServiceTest extends TestCase
     public function testStopExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -134,7 +130,6 @@ class AgentServiceTest extends TestCase
     public function testStopTransactionSendFailure(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -156,7 +151,6 @@ class AgentServiceTest extends TestCase
     public function testStopNonExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -181,7 +175,6 @@ class AgentServiceTest extends TestCase
     public function testStartSpanWithExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -203,7 +196,6 @@ class AgentServiceTest extends TestCase
     public function testStartSpanWithNonExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -234,7 +226,6 @@ class AgentServiceTest extends TestCase
         $agentPhilkraService->method('factory')->will($this->returnValue($factoryMock));
 
         $agentService = new AgentService(
-            true,
             $this->logger,
             $agentPhilkraService
         );
@@ -259,7 +250,6 @@ class AgentServiceTest extends TestCase
     public function testStopNonExistentSpan(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );

@@ -42,7 +42,7 @@ class ApmHandler extends AbstractProcessingHandler
      */
     protected function write(array $record): void
     {
-        if (true === $this->agentService->getApmEnabled()) {
+        if (true === $this->agentService->isEnabled()) {
             // Try the default behavior for the Monolog implementation
             if (
                 false === empty($record[static::CONTEXT_KEY][static::EXCEPTION_KEY])

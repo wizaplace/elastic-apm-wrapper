@@ -25,7 +25,7 @@ class ApmHandlerTest extends TestCase
     public function testMissingThrowable(): void
     {
         $agentService = $this->getMockBuilder(AgentService::class)->disableOriginalConstructor()->getMock();
-        $agentService->method('getApmEnabled')->will($this->returnValue(true));
+        $agentService->method('isEnabled')->will($this->returnValue(true));
         $agentService->expects($this->once())->method('error')->with(
             $this->callback(function (\Exception $exception) {
                 return ApmHandler::MISSING_THROWABLE_ERROR === $exception->getMessage();
@@ -48,7 +48,7 @@ class ApmHandlerTest extends TestCase
         ];
 
         $agentService = $this->getMockBuilder(AgentService::class)->disableOriginalConstructor()->getMock();
-        $agentService->method('getApmEnabled')->will($this->returnValue(true));
+        $agentService->method('isEnabled')->will($this->returnValue(true));
         $agentService->expects($this->once())->method('error')->with($exception, $context);
 
         $apmHandler = new ApmHandler($agentService, Logger::ERROR);
@@ -65,7 +65,7 @@ class ApmHandlerTest extends TestCase
 
         $agentService = $this->getMockBuilder(AgentService::class)->disableOriginalConstructor()->getMock();
 
-        $agentService->method('getApmEnabled')->will($this->returnValue(false));
+        $agentService->method('isEnabled')->will($this->returnValue(false));
 
         $apmHandler = new ApmHandler($agentService, Logger::ERROR);
 

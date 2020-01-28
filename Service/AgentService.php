@@ -30,28 +30,18 @@ class AgentService
     /** @var Span [] */
     private $spans;
 
-    /** @var bool */
-    private $apmEnabled;
-
     public function __construct(
-        bool $apmEnabled,
         LoggerInterface $logger = null,
         Agent $agent = null
     ) {
-        $this->apmEnabled = $apmEnabled;
         $this->agent = $agent;
         $this->logger = $logger;
         $this->spans = [];
     }
 
-    public function getApmEnabled(): bool
+    public function isEnabled(): bool
     {
-        return $this->apmEnabled;
-    }
-
-    public function getAgent(): ?Agent
-    {
-        return $this->agent;
+        return $this->agent instanceof Agent;
     }
 
     /**
@@ -62,7 +52,7 @@ class AgentService
     public function startTransaction(string $name, array $context = []): self
     {
         // Monitoring must be enabled. We can start only one transaction.
-        if (true === $this->apmEnabled) {
+        if (true === $this->isEnabled()) {
             if (false === $this->transaction instanceof Transaction) {
                 $this->transaction = $this->agent->startTransaction($name, $context);
             } else {
@@ -97,7 +87,7 @@ class AgentService
                     'Impossible to send the transaction data to the APM. Error was:' . $throwable->getMessage()
                 );
             }
-        } elseif (true === $this->apmEnabled) {
+        } elseif (true === $this->isEnabled()) {
             $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing transaction.');
         }
 
@@ -116,7 +106,7 @@ class AgentService
      */
     public function error(\Throwable $throwable, array $context = []): self
     {
-        if (true === $this->apmEnabled) {
+        if (true === $this->isEnabled()) {
             if (true === $this->transaction instanceof Transaction) {
                 $this->agent->captureThrowable($throwable, $context, $this->transaction);
             } else {
@@ -129,7 +119,7 @@ class AgentService
 
     public function startSpan(string $name, Transaction $parent = null): ?Span
     {
-        if (false === $this->apmEnabled) {
+        if (false === $this->isEnabled()) {
             return null;
         }
 

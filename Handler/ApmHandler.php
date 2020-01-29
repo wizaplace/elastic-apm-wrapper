@@ -42,21 +42,19 @@ class ApmHandler extends AbstractProcessingHandler
      */
     protected function write(array $record): void
     {
-        if (true === $this->agentService->getApmEnabled()) {
-            // Try the default behavior for the Monolog implementation
-            if (
-                false === empty($record[static::CONTEXT_KEY][static::EXCEPTION_KEY])
-                && $record[static::CONTEXT_KEY][static::EXCEPTION_KEY] instanceof \Throwable
-            ) {
-                $this->agentService->error($record[static::CONTEXT_KEY][static::EXCEPTION_KEY], $record[static::CONTEXT_KEY]);
-            } else {
-                /**
-                 * Just a safety net if the record is not well-structured.
-                 * Should never happen unless Monolog wiring is not properly done.
-                 */
-                $ex = new \LogicException(static::MISSING_THROWABLE_ERROR);
-                $this->agentService->error($ex, $record);
-            }
+        // Try the default behavior for the Monolog implementation
+        if (
+            false === empty($record[static::CONTEXT_KEY][static::EXCEPTION_KEY])
+            && $record[static::CONTEXT_KEY][static::EXCEPTION_KEY] instanceof \Throwable
+        ) {
+            $this->agentService->error($record[static::CONTEXT_KEY][static::EXCEPTION_KEY], $record[static::CONTEXT_KEY]);
+        } else {
+            /**
+             * Just a safety net if the record is not well-structured.
+             * Should never happen unless Monolog wiring is not properly done.
+             */
+            $ex = new \LogicException(static::MISSING_THROWABLE_ERROR);
+            $this->agentService->error($ex, $record);
         }
     }
 }

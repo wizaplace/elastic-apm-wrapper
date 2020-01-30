@@ -51,7 +51,6 @@ class AgentServiceTest extends TestCase
         ;
 
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -65,7 +64,6 @@ class AgentServiceTest extends TestCase
     public function testStartNewTransactionWhileAlreadyStarted(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -84,30 +82,11 @@ class AgentServiceTest extends TestCase
     }
 
     /**
-     * @covers  \Wizacha\ElasticApm\Service\AgentService::startTransaction
-     */
-    public function testStartNewTransactionWithFlagFalse(): void
-    {
-        $agentService = new AgentService(
-            false,
-            $this->logger,
-            $this->agentPhilkraService
-        );
-
-        $this->agentPhilkraService->expects($this->never())
-            ->method('startTransaction')
-        ;
-
-        static::assertInstanceOf(AgentService::class, $agentService->startTransaction($this->transactionName));
-    }
-
-    /**
      * @covers  \Wizacha\ElasticApm\Service\AgentService::stopTransaction
      */
     public function testStopExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -134,7 +113,6 @@ class AgentServiceTest extends TestCase
     public function testStopTransactionSendFailure(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -156,7 +134,6 @@ class AgentServiceTest extends TestCase
     public function testStopNonExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -181,7 +158,6 @@ class AgentServiceTest extends TestCase
     public function testStartSpanWithExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -203,7 +179,6 @@ class AgentServiceTest extends TestCase
     public function testStartSpanWithNonExistentTransaction(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );
@@ -234,7 +209,6 @@ class AgentServiceTest extends TestCase
         $agentPhilkraService->method('factory')->will($this->returnValue($factoryMock));
 
         $agentService = new AgentService(
-            true,
             $this->logger,
             $agentPhilkraService
         );
@@ -259,7 +233,6 @@ class AgentServiceTest extends TestCase
     public function testStopNonExistentSpan(): void
     {
         $agentService = new AgentService(
-            true,
             $this->logger,
             $this->agentPhilkraService
         );

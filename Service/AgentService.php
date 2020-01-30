@@ -30,23 +30,13 @@ class AgentService
     /** @var Span [] */
     private $spans;
 
-    /** @var bool */
-    private $apmEnabled;
-
     public function __construct(
-        bool $apmEnabled,
         LoggerInterface $logger,
         Agent $agent
     ) {
-        $this->apmEnabled = $apmEnabled;
         $this->agent = $agent;
         $this->logger = $logger;
         $this->spans = [];
-    }
-
-    public function getApmEnabled(): bool
-    {
-        return $this->apmEnabled;
     }
 
     /**
@@ -56,13 +46,10 @@ class AgentService
      */
     public function startTransaction(string $name, array $context = []): self
     {
-        // Monitoring must be enabled. We can start only one transaction.
-        if (true === $this->apmEnabled) {
-            if (false === $this->transaction instanceof Transaction) {
-                $this->transaction = $this->agent->startTransaction($name, $context);
-            } else {
-                $this->logger->warning('Elastic APM wrapper transaction is already started');
-            }
+        if (false === $this->transaction instanceof Transaction) {
+            $this->transaction = $this->agent->startTransaction($name, $context);
+        } else {
+            $this->logger->warning('Elastic APM wrapper transaction is already started');
         }
 
         return $this;
@@ -92,7 +79,7 @@ class AgentService
                     'Impossible to send the transaction data to the APM. Error was:' . $throwable->getMessage()
                 );
             }
-        } elseif (true === $this->apmEnabled) {
+        } else {
             $this->logger->warning('Elastic APM wrapper: trying to stop a non-existing transaction.');
         }
 
@@ -111,12 +98,10 @@ class AgentService
      */
     public function error(\Throwable $throwable, array $context = []): self
     {
-        if (true === $this->apmEnabled) {
-            if (true === $this->transaction instanceof Transaction) {
-                $this->agent->captureThrowable($throwable, $context, $this->transaction);
-            } else {
-                $this->logger->warning('Elastic APM wrapper: trying to log an error with a non-existing transaction.');
-            }
+        if (true === $this->transaction instanceof Transaction) {
+            $this->agent->captureThrowable($throwable, $context, $this->transaction);
+        } else {
+            $this->logger->warning('Elastic APM wrapper: trying to log an error with a non-existing transaction.');
         }
 
         return $this;
@@ -124,10 +109,6 @@ class AgentService
 
     public function startSpan(string $name, Transaction $parent = null): ?Span
     {
-        if (false === $this->apmEnabled) {
-            return null;
-        }
-
         if (false === $this->transaction instanceof Transaction) {
             $this->logger->warning('Elastic APM wrapper: trying to start a span with a non-existing transaction.');
 

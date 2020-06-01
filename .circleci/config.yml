@@ -1,13 +1,23 @@
 version: '2.1'
 executors:
-  php:
+  php7-2:
     docker:
-      - image: php:7.2.25-cli-alpine
+      - image: php:7.2-alpine
+    working_directory: ~/repo
+  php7-3:
+    docker:
+      - image: php:7.3-alpine
+    working_directory: ~/repo
+  php7-4:
+    docker:
+      - image: php:7.4-alpine
     working_directory: ~/repo
 
 jobs:
-  composer:
-    executor: php
+  # The complete list : all in the minimum PHP version supported.
+  # This need to be improved later in a more flexible way instead of duplicating
+  composer7-2:
+    executor: php7-2
     steps:
       - run:
           name: Install alpine requirements for checkout
@@ -19,9 +29,8 @@ jobs:
           name: composer
           command: |
             if [[ ! -f vendor/autoload.php ]]; then
-                curl https://getcomposer.org/composer.phar --location --silent  --output /usr/bin/composer; \
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
                 chmod +x /usr/bin/composer; \
-                composer global require hirak/prestissimo; \
                 composer install --no-progress --no-interaction; \
             fi
       - save_cache:
@@ -33,25 +42,19 @@ jobs:
           paths:
             - vendor
 
-  phpcs:
-    executor: php
+  phpcs7-2:
+    executor: php7-2
     steps:
-      - run:
-          name: Install alpine requirements for checkout
-          command: apk add git openssh-client curl
       - checkout
       - attach_workspace:
           at: .
       - run:
           name: phpcs
-          command: vendor/bin/phpcs
+          command: vendor/bin/phpcs -n
 
-  phpstan:
-    executor: php
+  phpstan7-2:
+    executor: php7-2
     steps:
-      - run:
-          name: Install alpine requirements for checkout
-          command: apk add git openssh-client curl
       - checkout
       - attach_workspace:
           at: .
@@ -59,60 +62,108 @@ jobs:
           name: phpstan
           command: vendor/bin/phpstan analyse
 
-  phpunit:
-    executor: php
+  phpunit7-2:
+    executor: php7-2
     steps:
-      - run:
-          name: Install alpine requirements for checkout
-          command: apk add git openssh-client curl
       - checkout
       - attach_workspace:
           at: .
       - run:
           name: phpunit
-          command: vendor/bin/phpunit  --testdox
-      - store_test_results:
-          path: phpunit-result
+          command: vendor/bin/phpunit --testdox
 
-  sonar-qube:
-    docker:
-      - image: php:7.2.25-cli
-    working_directory: ~/repo
+  # Now we repeat the basics for each PHP version. Composer + PHPUNIT
+  composer7-3:
+    executor: php7-3
+    steps:
+      - run:
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpunit7-3:
+    executor: php7-3
     steps:
       - checkout
+      - attach_workspace:
+          at: .
       - run:
-          name: Install Sonarqube
-          environment:
-            VERSION: 4.1.0.1829
-          command: |
-            apt update
-            apt install unzip -y
-            mkdir -p /tmp/scanner
-            curl -Ol https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-${VERSION}-linux.zip
-            unzip -qq -o sonar-scanner-cli-${VERSION}-linux.zip -d /tmp/scanner
-            mv /tmp/scanner/sonar-scanner-${VERSION}-linux /usr/local/sonar-scanner
-            chmod +x /usr/local/sonar-scanner/bin/sonar-scanner
-            chmod +x /usr/local/sonar-scanner/jre/bin/java
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
+
+  composer7-4:
+    executor: php7-4
+    steps:
       - run:
-          name: Run Sonarqube scanner
-          environment:
-            SONARQUBE_SCANNER_PARAMS: '{"sonar.host.url":"https://sonarcloud.io"}'
-            SONAR_SCANNER_OPTS: "-Xmx2048m"
+          name: Install alpine requirements for checkout
+          command: apk add git openssh-client curl
+      - checkout
+      - restore_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - run:
+          name: composer
           command: |
-            /usr/local/sonar-scanner/bin/sonar-scanner
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - save_cache:
+          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          paths:
+            - ./vendor
+      - persist_to_workspace:
+          root: .
+          paths:
+            - vendor
+
+  phpunit7-4:
+    executor: php7-4
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - run:
+          name: phpunit
+          command: vendor/bin/phpunit --testdox
 
 workflows:
   version: '2.1'
   Code quality:
     jobs:
-      - composer
-      - phpcs:
+      - composer7-2
+      - composer7-3
+      - composer7-4
+      - phpcs7-2:
           requires:
-            - composer
-      - phpstan:
+            - composer7-2
+      - phpstan7-2:
           requires:
-            - composer
-      - phpunit:
+            - composer7-2
+      - phpunit7-2:
           requires:
-            - composer
-      - sonar-qube
+            - composer7-2
+      - phpunit7-3:
+          requires:
+            - composer7-3
+      - phpunit7-4:
+          requires:
+            - composer7-4

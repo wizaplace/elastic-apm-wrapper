@@ -40,6 +40,8 @@ class AgentService
     }
 
     /**
+     * @param string[] $context
+     *
      * @return \Wizacha\ElasticApm\Service\AgentService
      *
      * @throws \PhilKra\Exception\Transaction\DuplicateTransactionNameException

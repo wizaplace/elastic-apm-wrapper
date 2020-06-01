@@ -43,10 +43,7 @@ class ApmHandler extends AbstractProcessingHandler
     protected function write(array $record): void
     {
         // Try the default behavior for the Monolog implementation
-        if (
-            false === empty($record[static::CONTEXT_KEY][static::EXCEPTION_KEY])
-            && $record[static::CONTEXT_KEY][static::EXCEPTION_KEY] instanceof \Throwable
-        ) {
+        if ($this->checkExceptionKey($record)) {
             $this->agentService->error($record[static::CONTEXT_KEY][static::EXCEPTION_KEY], $record[static::CONTEXT_KEY]);
         } else {
             /**
@@ -56,5 +53,20 @@ class ApmHandler extends AbstractProcessingHandler
             $ex = new \LogicException(static::MISSING_THROWABLE_ERROR);
             $this->agentService->error($ex, $record);
         }
+    }
+
+    /** @param mixed[] $record */
+    protected function checkExceptionKey(array $record): bool
+    {
+        if (
+            true === array_key_exists(static::CONTEXT_KEY, $record)
+            && is_array($record[static::CONTEXT_KEY])
+            && true === array_key_exists(static::EXCEPTION_KEY, $record[static::CONTEXT_KEY])
+            && $record[static::CONTEXT_KEY][static::EXCEPTION_KEY] instanceof \Throwable
+        ) {
+            return true;
+        }
+
+        return  false;
     }
 }

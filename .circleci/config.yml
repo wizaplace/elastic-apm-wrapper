@@ -11,18 +11,17 @@ executors:
       - image: php:7.4-alpine
 
 jobs:
-  composer:
+  phpcs:
     parameters:
       executor:
         type: executor
     executor: << parameters.executor >>
     steps:
-      - run:
-          name: Install alpine requirements for checkout
-          command: apk add git openssh-client curl
       - checkout
       - restore_cache:
-          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+          key: composer-<< parameters.executor >>-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
+      - attach_workspace:
+          at: .
       - run:
           name: composer
           command: |
@@ -31,24 +30,6 @@ jobs:
                 chmod +x /usr/bin/composer; \
                 composer install --no-progress --no-interaction; \
             fi
-      - save_cache:
-          key: composer-{{ checksum "composer.json" }}-{{ checksum "composer.lock" }}
-          paths:
-            - ./vendor
-      - persist_to_workspace:
-          root: .
-          paths:
-            - vendor
-
-  phpcs:
-    parameters:
-      executor:
-        type: executor
-    executor: << parameters.executor >>
-    steps:
-      - checkout
-      - attach_workspace:
-          at: .
       - run:
           name: phpcs
           command: vendor/bin/phpcs -n
@@ -63,6 +44,14 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - run:
           name: phpstan
           command: vendor/bin/phpstan analyse
 
@@ -76,31 +65,29 @@ jobs:
       - attach_workspace:
           at: .
       - run:
+          name: composer
+          command: |
+            if [[ ! -f vendor/autoload.php ]]; then
+                curl https://getcomposer.org/composer-stable.phar --location --silent  --output /usr/bin/composer; \
+                chmod +x /usr/bin/composer; \
+                composer install --no-progress --no-interaction; \
+            fi
+      - run:
           name: phpunit
           command: vendor/bin/phpunit --testdox
 
 workflows:
   all-tests:
     jobs:
-      - composer:
-          matrix:
-            parameters:
-              executor: [php7-2, php7-3, php7-4]
       - phpcs:
-          requires:
-            - composer
           matrix:
             parameters:
               executor: [php7-2, php7-3, php7-4]
       - phpstan:
-          requires:
-            - composer
           matrix:
             parameters:
               executor: [php7-2, php7-3, php7-4]
       - phpunit:
-          requires:
-            - composer
           matrix:
             parameters:
               executor: [php7-2, php7-3, php7-4]

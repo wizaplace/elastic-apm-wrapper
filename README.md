@@ -32,6 +32,7 @@ In order to instantiate the service using this agent, you have to provide severa
 - `environment` (e.g. 'Development', 'Production')
 - `serverUrl` APM Server Endpoint
 - `secretToken` Secret token for your Elastic APM Server
+- `timeout` Guzzle Client timeout
 
 ## Usage
 

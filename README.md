@@ -1,4 +1,6 @@
 [![CircleCI](https://circleci.com/gh/wizaplace/elastic-apm-wrapper.svg?style=svg&circle-token=6c0dadd3c5c190c95ac1ba88eacdc164861e7443)](https://circleci.com/gh/wizaplace/elastic-apm-wrapper)
+[![Version](https://img.shields.io/github/v/release/wizaplace/elastic-apm-wrapper)](https://circleci.com/gh/wizaplace/elastic-apm-wrapper/tree/master)
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/wizaplace/elastic-apm-wrapper/graphs/commit-activity)
 
 # Elastic APM Wrapper
 
@@ -57,4 +59,5 @@ Within one transaction there can be 0-* spans captured.
 A custom Monolog handler (`ApmHandler.php`) has been included to this package, enabling you to send data to the APM automatically when Monolog is called.
 This configuration is optional.
 
-
+### Licence
+This library is distributed under the terms of the MIT licence.

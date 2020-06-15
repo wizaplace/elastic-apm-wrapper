@@ -16,7 +16,7 @@
         "sort-packages": true
     },
     "require": {
-        "monolog/monolog": "^1",
+        "monolog/monolog": "~1",
         "wizaplace/elastic-apm-php-agent": "^1.0"
     },
     "autoload": {
@@ -32,12 +32,6 @@
             "Wizacha\\ElasticApm\\Tests\\": "/Tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/wizaplace/elastic-apm-php-agent.git"
-        }
-    ],
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^2.16",
         "infection/infection": "^0.15.3",

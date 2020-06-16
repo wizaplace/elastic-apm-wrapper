@@ -1,6 +1,8 @@
 [![CircleCI](https://circleci.com/gh/wizaplace/elastic-apm-wrapper.svg?style=svg&circle-token=6c0dadd3c5c190c95ac1ba88eacdc164861e7443)](https://circleci.com/gh/wizaplace/elastic-apm-wrapper)
+[![License](https://poser.pugx.org/wizaplace/elastic-apm-wrapper/license)](https://packagist.org/packages/wizaplace/elastic-apm-wrapper)
 [![Version](https://img.shields.io/github/v/release/wizaplace/elastic-apm-wrapper)](https://circleci.com/gh/wizaplace/elastic-apm-wrapper/tree/master)
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/wizaplace/elastic-apm-wrapper/graphs/commit-activity)
+[![Ask Me Anything !](https://img.shields.io/badge/Ask%20me-anything-1abc9c.svg)](https://GitHub.com/wizaplace/elastic-apm-wrapper)
 
 # Elastic APM Wrapper
 

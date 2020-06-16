@@ -12,17 +12,7 @@ PHP Wrapper to send Logs to Elastic APM
 
 The recommended way to install the wrapper is through Composer.
 
-First, in the require section of your composer.json file, you need to authorize the unstable version of the Agent:
-`"philkra/elastic-apm-php-agent": "dev-master"`.
-
-In the repositories section of this same file, you need to specify the wrapper repo:
-
-    {
-         "type": "git",
-         "url": "git@github.com:wizaplace/elastic-apm-wrapper.git"
-    }
-
-Then, run the following composer command:
+Run the following composer command:
 
 ```composer require wizaplace/elastic-apm-wrapper```
 
